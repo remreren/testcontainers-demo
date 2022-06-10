@@ -1,7 +1,7 @@
 package com.emlakjet.testcontainers.dto;
 
 import lombok.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,5 +13,5 @@ public final class UserDetailDto {
     private String name;
     private String surname;
     private String username;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 }

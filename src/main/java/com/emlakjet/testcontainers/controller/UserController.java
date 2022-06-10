@@ -1,8 +1,8 @@
 package com.emlakjet.testcontainers.controller;
 
+import com.emlakjet.testcontainers.service.UserService;
 import com.emlakjet.testcontainers.dto.UserDetailDto;
 import com.emlakjet.testcontainers.dto.UserDto;
-import com.emlakjet.testcontainers.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

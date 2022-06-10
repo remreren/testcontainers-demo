@@ -1,21 +1,22 @@
-package com.emlakjet.testcontainers.service;
+package testcontainers.repo;
 
 import com.emlakjet.testcontainers.TestcontainersDemoApplication;
 import com.emlakjet.testcontainers.dao.UserEntity;
-import com.emlakjet.testcontainers.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.*;
-import org.testcontainers.junit.jupiter.*;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import com.emlakjet.testcontainers.repo.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@SpringBootTest(classes = TestcontainersDemoApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-class UserServiceTest {
+@SpringBootTest(classes = TestcontainersDemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class UserRepositoryTest {
 
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
@@ -31,7 +32,7 @@ class UserServiceTest {
     }
 
     @Test
-    void create_user_in_database() {
+    void should_create_user() {
 
         //Given
         var user = new UserEntity(0L, "Emre", "Eren", "remreren", null, null);
@@ -48,7 +49,7 @@ class UserServiceTest {
     }
 
     @Test
-    void fetch_user_from_database() {
+    void should_fetch_user() {
 
         //Given
         var user = new UserEntity(0L, "Emre", "Eren", "remreren", null, null);

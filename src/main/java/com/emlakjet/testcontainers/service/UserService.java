@@ -1,9 +1,9 @@
 package com.emlakjet.testcontainers.service;
 
+import com.emlakjet.testcontainers.repo.UserRepository;
 import com.emlakjet.testcontainers.dao.UserMapper;
 import com.emlakjet.testcontainers.dto.UserDetailDto;
 import com.emlakjet.testcontainers.dto.UserDto;
-import com.emlakjet.testcontainers.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
