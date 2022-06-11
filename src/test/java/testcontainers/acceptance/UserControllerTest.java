@@ -11,13 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.*;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Testcontainers
 @ExtendWith(SpringExtension.class)
@@ -48,16 +49,60 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body);
 
-        var mvcResult = mockMvc.perform(request)
+        mockMvc.perform(request)
                 .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Emre"))
+                .andExpect(jsonPath("$.surname").value("Eren"))
+                .andExpect(jsonPath("$.username").value("remreren"))
                 .andReturn();
+    }
 
+    @Test
+    @DisplayName("get user by id")
+    void should_get_user_by_id() throws Exception {
+        var createBody = mapper.writeValueAsString(new UserDto(0L, "Emre", "Eren", "remreren"));
+        var requestCreate = post("/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createBody);
+        var createResponse = mockMvc.perform(requestCreate).andReturn();
+        var id = toUserDto(createResponse).getId();
+        var requestGet = get(String.format("/user/%d/", id));
+
+        mockMvc.perform(requestGet)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
+                .andExpect(jsonPath("$.name").value("Emre"))
+                .andExpect(jsonPath("$.surname").value("Eren"))
+                .andExpect(jsonPath("$.username").value("remreren"))
+                .andReturn();
+    }
+
+    @Test
+    @DisplayName("get user detail by id")
+    void should_get_user_detail_by_id() throws Exception {
+        var createBody = mapper.writeValueAsString(new UserDto(0L, "Emre", "Eren", "remreren"));
+        var requestCreate = post("/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createBody);
+        var createResponse = mockMvc.perform(requestCreate).andReturn();
+        var id = toUserDto(createResponse).getId();
+        var requestGet = get(String.format("/user/%d/detail/", id));
+
+        mockMvc.perform(requestGet)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
+                .andExpect(jsonPath("$.name").value("Emre"))
+                .andExpect(jsonPath("$.surname").value("Eren"))
+                .andExpect(jsonPath("$.username").value("remreren"))
+                .andExpect(jsonPath("$.createdAt").isNotEmpty())
+                .andReturn();
+    }
+
+    private UserDto toUserDto(MvcResult mvcResult) throws Exception {
         var content = mvcResult.getResponse().getContentAsString();
-        var result = mapper.readValue(content, UserDto.class);
-
-        assertEquals(200, mvcResult.getResponse().getStatus());
-        assertEquals("Emre", result.getName());
-        assertEquals("Eren", result.getSurname());
-        assertEquals("remreren", result.getUsername());
+        return mapper.readValue(content, UserDto.class);
     }
 }
